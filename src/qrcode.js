@@ -99,12 +99,7 @@ qrcode.decode_utf8 = function ( s )
 }
 
 qrcode.process = function(ctx){
-	
-	var start = new Date().getTime();
-
 	var image = qrcode.grayScaleToBitmap(qrcode.grayscale());
-    //var image = qrcode.binarize(128);
-	
     if(qrcode.debug)
     {
         for (var y = 0; y < qrcode.height; y++)
@@ -119,41 +114,16 @@ qrcode.process = function(ctx){
         }
         ctx.putImageData(qrcode.imagedata, 0, 0);
     }
-	
-	//var finderPatternInfo = new FinderPatternFinder().findFinderPattern(image);
-	
 	var detector = new Detector(image);
-
 	var qRCodeMatrix = detector.detect();
-	
-	/*for (var y = 0; y < qRCodeMatrix.bits.Height; y++)
-	{
-		for (var x = 0; x < qRCodeMatrix.bits.Width; x++)
-		{
-			var point = (x * 4*2) + (y*2 * qrcode.width * 4);
-			qrcode.imagedata.data[point] = qRCodeMatrix.bits.get_Renamed(x,y)?0:0;
-			qrcode.imagedata.data[point+1] = qRCodeMatrix.bits.get_Renamed(x,y)?0:0;
-			qrcode.imagedata.data[point+2] = qRCodeMatrix.bits.get_Renamed(x,y)?255:0;
-		}
-	}*/
-    if(qrcode.debug)
-        ctx.putImageData(qrcode.imagedata, 0, 0);
-	
 	var reader = Decoder.decode(qRCodeMatrix.bits);
 	var data = reader.DataByte;
 	var str="";
-	for(var i=0;i<data.length;i++)
-	{
+	for(var i=0;i<data.length;i++){
 		for(var j=0;j<data[i].length;j++)
 			str+=String.fromCharCode(data[i][j]);
 	}
-	
-	var end = new Date().getTime();
-	var time = end - start;
-	console.log(time);
-    
-	return qrcode.decode_utf8(str);
-	//alert("Time:" + time + " Code: "+str);
+	return str;
 }
 
 qrcode.getPixel = function(x,y){

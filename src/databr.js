@@ -249,9 +249,10 @@ function QRCodeDataBlockReader(blocks,  version,  numErrorCorrectionCode)
 		var output = new Array();
 		var MODE_NUMBER = 1;
 	    var MODE_ROMAN_AND_NUMBER = 2;
-	    var MODE_8BIT_BYTE = 4;
+      var MODE_STRUCTURED_APPEND = 3;
+      var MODE_8BIT_BYTE = 4;
 	    var MODE_KANJI = 8;
-		do 
+      do 
 					{
 						var mode = this.NextMode();
 						//canvas.println("mode: " + mode);
@@ -265,6 +266,12 @@ function QRCodeDataBlockReader(blocks,  version,  numErrorCorrectionCode)
 						//if (mode != 1 && mode != 2 && mode != 4 && mode != 8)
 						//	break;
 						//}
+						if (mode == MODE_STRUCTURED_APPEND){
+              this.getNextBits(4);//current frame number
+              this.getNextBits(4);//frame total count
+              this.getNextBits(8);//parity data
+              mode = this.getNextBits(4);//real mode
+            }
 						if (mode != MODE_NUMBER && mode != MODE_ROMAN_AND_NUMBER && mode != MODE_8BIT_BYTE && mode != MODE_KANJI)
 						{
 							/*					canvas.println("Invalid mode: " + mode);
